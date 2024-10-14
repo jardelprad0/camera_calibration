@@ -4,6 +4,7 @@ import glob
 import yaml
 import os
 
+
 # Termination criteria
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
