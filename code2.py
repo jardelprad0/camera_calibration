@@ -18,11 +18,15 @@ objpoints = []  # 3D point in real world space
 imgpoints = []  # 2D points in image plane.
 
 # Load images from specified directory
-images = glob.glob(r'/home/jardel/Desktop/camera_calibration/gopro9/*.JPG')
+images = glob.glob(r'/home/jardel/Desktop/camera_calibration/iphone_15_ultra-wide_camera-1/*.jpeg')
+images_result = glob.glob(r'/home/jardel/Desktop/camera_calibration/iphone_15_ultra-wide_camera-2/*.jpeg')
 
 # Create a results directory to save corrected images
-results_dir = '/home/jardel/Desktop/camera_calibration/results-gopro'
+results_dir = '/home/jardel/Desktop/camera_calibration/results-iphone15'
+combined_iphone_results = '/home/jardel/Desktop/camera_calibration/results-combined-iphone'
+
 os.makedirs(results_dir, exist_ok=True)
+os.makedirs(combined_iphone_results, exist_ok=True)
 
 found = 0
 for fname in images:
@@ -57,11 +61,11 @@ data = {
 }
 
 # Save calibration data to a file
-with open("calibration_matrix-gopro.yaml", "w") as f:
+with open("calibration_matrix-iphone.yaml", "w") as f:
     yaml.dump(data, f)
 
 # Apply undistortion to the images and display original and corrected images
-for idx, fname in enumerate(images):
+for idx, fname in enumerate(images_result):
     img = cv2.imread(fname)
     
     # Undistort the image using the calibration parameters
@@ -73,13 +77,17 @@ for idx, fname in enumerate(images):
     img_resized = cv2.resize(img, (640, 480))  # Resize original
     dst_resized = cv2.resize(dst, (640, 480))  # Resize corrected
     
-    # Concatenate the original and corrected images horizontally
+     # Concatenate the original and corrected images horizontally
     combined = np.hstack((img_resized, dst_resized))
     
     # Display the combined image
     cv2.imshow('Original vs Corrected', combined)
     cv2.waitKey(500)
     
+    # Defina o caminho corretamente
+    corrected_combined_image_name = os.path.join(combined_iphone_results, f'corrected_combined_{idx}.png')  # Modifiquei o `combined` para `combined_gopro_results`
+    cv2.imwrite(corrected_combined_image_name, combined)
+
     # Save the corrected image
     corrected_image_name = os.path.join(results_dir, f'corrected_{idx}.png')
     cv2.imwrite(corrected_image_name, dst)
